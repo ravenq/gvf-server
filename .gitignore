@@ -1,0 +1,13 @@
+# vscode
+.vscode/
+
+# beego
+swagger/
+
+# bin
+*.exe
+
+# misc
+*.zip
+*.tmp
+debug
