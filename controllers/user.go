@@ -8,13 +8,11 @@ import (
 
 	"github.com/ravenq/gvgo/models"
 	"github.com/ravenq/gvgo/utils"
-
-	"github.com/astaxie/beego"
 )
 
 // UserController operations for User
 type UserController struct {
-	beego.Controller
+	BaseController
 }
 
 // URLMapping ...
@@ -24,7 +22,6 @@ func (c *UserController) URLMapping() {
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
-
 	c.Mapping("Login", c.Login)
 }
 
@@ -45,12 +42,17 @@ func (c *UserController) Login() {
 	}
 
 	if err != nil {
-		c.Data["json"] = utils.FailResult(1, err)
+		c.Data["json"] = utils.FailResult(utils.ErrUserNotExist)
 	} else {
 		if p.Password != v.Password {
-			c.Data["json"] = utils.FailResult(2, errors.New("password error"))
+			c.Data["json"] = utils.FailResult(utils.ErrPasswordError)
 		} else {
 			v.Token = utils.UUID()
+			sess, _ := utils.GlobalSessions.SessionStart(c.Ctx.ResponseWriter, c.Ctx.Request)
+			//defer sess.SessionRelease(c.Ctx.ResponseWriter)
+			sess.Set(utils.TOKEN, v.Token)
+			sess.Set(p, p)
+
 			c.Data["json"] = utils.NewResult(v, nil)
 		}
 	}

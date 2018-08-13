@@ -8,13 +8,12 @@ import (
 
 	"github.com/ravenq/gvgo/models"
 	"github.com/ravenq/gvgo/utils"
-
-	"github.com/astaxie/beego"
+	//"github.com/astaxie/beego"
 )
 
 // MyloveController operations for Mylove
 type MyloveController struct {
-	beego.Controller
+	BaseController
 }
 
 // URLMapping ...

@@ -11,3 +11,4 @@ swagger/
 *.zip
 *.tmp
 debug
+/tmp
