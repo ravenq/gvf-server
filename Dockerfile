@@ -4,6 +4,8 @@ FROM golang:alpine
 COPY . /go/src/github.com/ravenq/gvf-server
 WORKDIR /go/src/github.com/ravenq/gvf-server
 
+EXPOSE 8080
+
 # build
 RUN go build
 
