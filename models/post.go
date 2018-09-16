@@ -31,16 +31,16 @@ const (
 // Post model.
 type Post struct {
 	Id         int64     `orm:"auto;unique;pk" json:"id,omitempty"`
-	Author     string    `json:"author,omitempty"`
+	Author     *User     `orm:"rel(fk)" json:"author,omitempty"`
 	Category   *Category `orm:"rel(fk)" json:"category,omitempty"`
 	Title      string    `json:"title,omitempty"`
 	Tags       string    `json:"tags,omitempty"`
 	IsTop      bool      `json:"is_top,omitempty"`
 	Summary    string    `json:"summary,omitempty"`
-	Content    string    `json:"content,omitempty"`
-	Vist       int       `json:"vist,omitempty"`
+	Content    string    `orm:"type(text)" json:"content,omitempty"`
+	Visit       int      `json:"visit,omitempty"`
 	Status     int       `json:"status,omitempty"`
-	PostType   PostType  `json:"post_type,omitempty"`
+	PostType   PostType  `json:"postType,omitempty"`
 	RefUrl     string    `orm:"null" json:"refRrl,omitempty"`
 	RefAuthor  string    `orm:"null" json:"refAuthor,omitempty"`
 	Translator string    `orm:"null" json:"translator,omitempty"`

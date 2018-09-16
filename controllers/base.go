@@ -1,9 +1,10 @@
 package controllers
 
 import (
-	"github.com/astaxie/beego/context"
+	"github.com/ravenq/gvf-server/models"
 	"github.com/astaxie/beego"
-	"github.com/ravenq/gvgo/utils"
+	"github.com/astaxie/beego/context"
+	"github.com/ravenq/gvf-server/utils"
 )
 
 // BaseController auth base controller.
@@ -12,13 +13,14 @@ type BaseController struct {
 	authMethods []string
 }
 
+// Init init
 func (c *BaseController) Init(ctx *context.Context, controllerName, actionName string, app interface{}) {
 	c.Controller.Init(ctx, controllerName, actionName, app)
 	c.AuthInit()
 }
 
+// AuthInit set methed which need validate
 func (c *BaseController) AuthInit() {
-	c.authMethods = append(c.authMethods, "GetAll")
 	c.authMethods = append(c.authMethods, "Post")
 	c.authMethods = append(c.authMethods, "Put")
 	c.authMethods = append(c.authMethods, "Delete")
@@ -27,15 +29,19 @@ func (c *BaseController) AuthInit() {
 // Prepare validate
 func (c *BaseController) Prepare() {
 	_, actionName := c.GetControllerAndAction()
-	sess, _ := utils.GlobalSessions.SessionStart(c.Ctx.ResponseWriter, c.Ctx.Request)
-	token := sess.Get(utils.TOKEN)
+	token := c.GetSession(utils.TOKEN)
 	for _, i := range c.authMethods {
 		if i == actionName {
-			if token == nil {
+			if token == nil {	
 				c.Data["json"] = utils.FailResult(utils.ErrNeedLogin)
 				c.ServeJSON()
 			}
-			break
+
+			if u, ok := token.(models.User); ok && !u.IsAdmin {
+				c.Data["json"] = utils.FailResult(utils.ErrNeedAdmin)
+				c.ServeJSON()
+			}
+			break	
 		}
 	}
 }

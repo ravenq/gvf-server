@@ -20,6 +20,8 @@ const (
 	UserNotExist
 	// PasswordError password error.
 	PasswordError
+	// NeedAdmin need admin user.
+	NeedAdmin
 )
 
 var (
@@ -29,12 +31,15 @@ var (
 	ErrUserNotExist = errors.New("user not exist")
 	// ErrPasswordError password error
 	ErrPasswordError = errors.New("password errror")
+	// ErrNeedAdmin need admin user.
+	ErrNeedAdmin = errors.New("need admin user.")
 )
 
 var errorMap = map[error]ResultStatus{
 	ErrNeedLogin: NeedLogin,
 	ErrUserNotExist: UserNotExist,
 	ErrPasswordError: PasswordError,
+	ErrNeedAdmin: NeedAdmin,
 }
 
 // Result for request

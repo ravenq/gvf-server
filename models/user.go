@@ -21,6 +21,7 @@ type User struct {
 	Age         int       `orm:"null" json:"age,omitempty"`
 	Address     string    `orm:"null" json:"address,omitempty"`
 	Email       string    `json:"email,omitempty"`
+	IsAdmin			bool			`json:"isAdmin,omitempty"`
 	Token       string    `orm:"-" json:"token,omitempty"`
 	UploadToken string    `orm:"-" json:"uploadToken,omitempty"`
 }

@@ -6,15 +6,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ravenq/gvgo/models"
-	"github.com/ravenq/gvgo/utils"
-
-	"github.com/astaxie/beego"
+	"github.com/ravenq/gvf-server/models"
+	"github.com/ravenq/gvf-server/utils"
 )
 
 // CategoryController operations for Category
 type CategoryController struct {
-	beego.Controller
+	BaseController
 }
 
 // URLMapping ...
@@ -128,7 +126,7 @@ func (c *CategoryController) Put() {
 	id, _ := strconv.ParseInt(idStr, 0, 64)
 	v := models.Category{Id: id}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	err := 	models.UpdateCategoryById(&v)
+	err := models.UpdateCategoryById(&v)
 	c.Data["json"] = utils.NewResult(v, err)
 	c.ServeJSON()
 }

@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ravenq/gvgo/models"
-	"github.com/ravenq/gvgo/utils"
+	"github.com/ravenq/gvf-server/models"
+	"github.com/ravenq/gvf-server/utils"
 	//"github.com/astaxie/beego"
 )
 

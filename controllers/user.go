@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ravenq/gvgo/models"
-	"github.com/ravenq/gvgo/utils"
+	"github.com/ravenq/gvf-server/models"
+	"github.com/ravenq/gvf-server/utils"
 )
 
 // UserController operations for User
@@ -47,12 +47,9 @@ func (c *UserController) Login() {
 		if p.Password != v.Password {
 			c.Data["json"] = utils.FailResult(utils.ErrPasswordError)
 		} else {
-			v.Token = utils.UUID()
-			sess, _ := utils.GlobalSessions.SessionStart(c.Ctx.ResponseWriter, c.Ctx.Request)
-			//defer sess.SessionRelease(c.Ctx.ResponseWriter)
-			sess.Set(utils.TOKEN, v.Token)
-			sess.Set(p, p)
-
+			//v.Token = utils.UUID()
+			c.SetSession(utils.TOKEN, v)
+			v.Token = c.CruSession.SessionID()
 			c.Data["json"] = utils.NewResult(v, nil)
 		}
 	}
@@ -70,6 +67,7 @@ func (c *UserController) Post() {
 	var v models.User
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	v.Password = utils.MD5(v.Password)
+	v.IsAdmin = false
 	_, err := models.AddUser(&v)
 	c.Data["json"] = utils.NewEmptyResult(err)
 	c.ServeJSON()

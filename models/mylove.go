@@ -13,9 +13,9 @@ import (
 // Mylove model.
 type Mylove struct {
 	Id         int64     `orm:"auto" json:"id,omitempty"`
-	Author     string    `orm:"size(128)" json:"author,omitempty"`
+	Author     *User     `orm:"rel(fk)" json:"author,omitempty"`
 	Content    string    `json:"content,omitempty"`
-	Photo      string    `json:"photo,omitempty"`
+	PhotoUrl   string    `json:"photo,omitempty"`
 	CreateTime time.Time `orm:"auto_now;type(datetime)" json:"createTime,omitempty"`
 	Sign       string    `json:"sign,omitempty"`
 }

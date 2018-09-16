@@ -12,3 +12,5 @@ swagger/
 *.tmp
 debug
 /tmp
+/routers/commentsRouter*.go
+*~

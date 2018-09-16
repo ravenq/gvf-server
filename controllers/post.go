@@ -6,15 +6,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ravenq/gvgo/models"
-	"github.com/ravenq/gvgo/utils"
-
-	"github.com/astaxie/beego"
+	"github.com/ravenq/gvf-server/models"
+	"github.com/ravenq/gvf-server/utils"
 )
 
-//  PostController operations for Post
+// PostController operations for Post
 type PostController struct {
-	beego.Controller
+	BaseController
 }
 
 // URLMapping ...

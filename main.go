@@ -1,39 +1,37 @@
 package main
 
 import (
-	_ "github.com/ravenq/gvgo/routers"
-	"github.com/ravenq/gvgo/utils"
+	"github.com/ravenq/gvf-server/models"
+	_ "github.com/ravenq/gvf-server/routers"
+	"github.com/ravenq/gvf-server/utils"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-	"github.com/astaxie/beego/session"
 	_ "github.com/go-sql-driver/mysql"
 )
-
+		
 func init() {
+	cnnStr := beego.AppConfig.String("STORAGE_CONNECT_STR")
 	orm.RegisterDriver("mysql", orm.DRMySQL)
-	orm.RegisterDataBase("default", "mysql", "root:root@/myblog?charset=utf8")
+	orm.RegisterDataBase("default", "mysql", cnnStr)
 	orm.RunSyncdb("default", false, true)
 
-	sessionConfig := &session.ManagerConfig{
-		CookieName:      "gosessionid",
-		EnableSetCookie: true,
-		Gclifetime:      3600,
-		Maxlifetime:     3600,
-		Secure:          false,
-		CookieLifeTime:  3600,
-		ProviderConfig:  "./tmp",
-		EnableSidInHTTPHeader: true,
-		SessionNameInHTTPHeader: "session",
+	// init admin user
+	u := models.User {
+		Name:     beego.AppConfig.String("ADMIN_NAME"),
+		Nick:     beego.AppConfig.String("ADMIN_NICK"),
+		Password: utils.MD5(beego.AppConfig.String("ADMIN_PASSWORD")),
+		Email:    beego.AppConfig.String("ADMIN_EMAIL"),
+		IsAdmin: 	true,
 	}
-	utils.GlobalSessions, _ = session.NewManager("file", sessionConfig)
-	go utils.GlobalSessions.GC()
+	o := orm.NewOrm()
+	o.Insert(&u)
 }
 
 func main() {
 	beego.BConfig.WebConfig.Session.SessionOn = true
-	beego.BConfig.WebConfig.Session.SessionProvider="file"
-	beego.BConfig.WebConfig.Session.SessionProviderConfig = "./tmp"
+	beego.BConfig.WebConfig.Session.SessionEnableSidInHTTPHeader = true
+	beego.BConfig.WebConfig.Session.SessionNameInHTTPHeader = "Session"
 	if beego.BConfig.RunMode == "dev" {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
