@@ -1,6 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"strings"
+	"os"
+
 	"github.com/ravenq/gvf-server/models"
 	_ "github.com/ravenq/gvf-server/routers"
 	"github.com/ravenq/gvf-server/utils"
@@ -9,20 +13,30 @@ import (
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
 )
-		
+
 func init() {
-	cnnStr := beego.AppConfig.String("STORAGE_CONNECT_STR")
+	var cnnStr string
+	dockerDB := beego.AppConfig.String("DB_MYSQL")
+	if dockerDB != "" {
+		addr, bAddr := os.LookupEnv(strings.ToUpper(dockerDB + "_PORT_3306_TCP_ADDR"))
+		pwd, bPwd := os.LookupEnv(strings.ToUpper(dockerDB + "_ENV_MYSQL_ROOT_PASSWORD"))
+		if bAddr && bPwd {
+			cnnStr = fmt.Sprintf("root:%s@tcp(%s:3306)/myblog?charset=utf8", pwd, addr)
+		}
+	} else {
+		cnnStr = beego.AppConfig.String("STORAGE_CONNECT_STR")
+	}
 	orm.RegisterDriver("mysql", orm.DRMySQL)
 	orm.RegisterDataBase("default", "mysql", cnnStr)
 	orm.RunSyncdb("default", false, true)
 
 	// init admin user
-	u := models.User {
+	u := models.User{
 		Name:     beego.AppConfig.String("ADMIN_NAME"),
 		Nick:     beego.AppConfig.String("ADMIN_NICK"),
 		Password: utils.MD5(beego.AppConfig.String("ADMIN_PASSWORD")),
 		Email:    beego.AppConfig.String("ADMIN_EMAIL"),
-		IsAdmin: 	true,
+		IsAdmin:  true,
 	}
 	o := orm.NewOrm()
 	o.Insert(&u)
