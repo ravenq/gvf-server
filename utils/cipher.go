@@ -16,6 +16,6 @@ func MD5(data string) string {
 
 // UUID generate a uuid string
 func UUID() string {
-	id, _ := uuid.NewV4()
+	id := uuid.NewV4()
 	return id.String()
 }
