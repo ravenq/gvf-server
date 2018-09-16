@@ -1,8 +1,8 @@
 FROM golang:alpine
 
 # Copy sources
-COPY . /go/src/gitlab.com/ravenq/gvf-server
-WORKDIR /go/src/gitlab.com/ravenq/gvf-server
+COPY . /go/src/github.com/ravenq/gvf-server
+WORKDIR /go/src/github.com/ravenq/gvf-server
 
 # build
 RUN go build

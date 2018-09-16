@@ -1,0 +1,25 @@
+version: "3"
+services:
+  gvf-server:
+    image: ravenq/gvf-server
+    restart: always
+    depends_on:
+      - db
+    ports: 
+      - 8080:8080
+    environment:
+      DB_MYSQL: db
+      QINIU_AK: <your qiniu ak>
+      QINIU_SK: <your qiniu sk>
+      QINIU_BUCKET: <your qiniu bucket name>
+      ADMIN_NAME: <admin name>
+      ADMIN_NICK: <admin nick>
+      ADMIN_PASSWORD: <admin password>
+      ADMIN_EMAIL: <admin email>
+      RUNMODE: prod
+
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
