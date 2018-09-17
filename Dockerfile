@@ -1,4 +1,6 @@
-FROM golang:alpine
+FROM golang:1.11-alpine
+
+MAINTAINER ravenq <flw_dream@126.com>
 
 # Copy sources
 COPY . /go/src/github.com/ravenq/gvf-server

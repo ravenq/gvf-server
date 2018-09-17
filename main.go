@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
-	"os"
-
 	"github.com/ravenq/gvf-server/models"
 	_ "github.com/ravenq/gvf-server/routers"
 	"github.com/ravenq/gvf-server/utils"
@@ -15,17 +12,9 @@ import (
 )
 
 func init() {
-	var cnnStr string
-	dockerDB := beego.AppConfig.String("DB_MYSQL")
-	if dockerDB != "" {
-		addr, bAddr := os.LookupEnv(strings.ToUpper(dockerDB + "_PORT_3306_TCP_ADDR"))
-		pwd, bPwd := os.LookupEnv(strings.ToUpper(dockerDB + "_ENV_MYSQL_ROOT_PASSWORD"))
-		if bAddr && bPwd {
-			cnnStr = fmt.Sprintf("root:%s@tcp(%s:3306)/myblog?charset=utf8", pwd, addr)
-		}
-	} else {
-		cnnStr = beego.AppConfig.String("STORAGE_CONNECT_STR")
-	}
+	dbHost := beego.AppConfig.String("DB_MYSQL_HOST")
+	dbPwd := beego.AppConfig.String("DB_MYSQL_PASSWORD")
+	cnnStr := fmt.Sprintf("root:%s@tcp(%s:3306)/myblog?charset=utf8", dbHost, dbPwd)
 	orm.RegisterDriver("mysql", orm.DRMySQL)
 	orm.RegisterDataBase("default", "mysql", cnnStr)
 	orm.RunSyncdb("default", false, true)

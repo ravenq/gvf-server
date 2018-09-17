@@ -14,30 +14,21 @@ or pull the image from DockerHub.
 docker pull ravenq/gvf-server
 ```
 
-### run docker container
-
-run a mysql container as data container.
-
-```sh
-docker run -d --name db -e MYSQL_ROOT_PASSWORD=my-secret-pw mysql
-```
-
-```sh
-docker run -d --name gvf-server --link db:db \
-  -p 8080:8080 \
-  -e DB_MYSQL: db \
-  -e QINIU_AK: <your qiniu ak> \
-  -e QINIU_SK: <your qiniu sk> \
-  -e QINIU_BUCKET: <your qiniu bucket name> \
-  -e ADMIN_NAME: <admin name> \
-  -e ADMIN_NICK: <admin nick> \
-  -e ADMIN_PASSWORD: <admin password> \
-  -e ADMIN_EMAIL: <admin email> \
-  -e RUNMODE: prod \
-  ravenq/gvf-server
-```
-
 ### run with docker-compose
+
+modify the docker-compose.yml for you config:
+
+```sh
+QINIU_AK: <your qiniu ak>
+QINIU_SK: <your qiniu sk>
+QINIU_BUCKET: <your qiniu bucket name>
+ADMIN_NAME: <admin name>
+ADMIN_NICK: <admin nick>
+ADMIN_PASSWORD: <admin password>
+ADMIN_EMAIL: <admin email>
+```
+
+and then run.
 
 ```sh
 docker-compose up -d

@@ -9,7 +9,8 @@ services:
     ports: 
       - "8080:8080"
     environment:
-      DB_MYSQL: db
+      DB_MYSQL_HOST: gvf-server-mysql
+      DB_MYSQL_PASSWORD: root
       QINIU_AK: <your qiniu ak>
       QINIU_SK: <your qiniu sk>
       QINIU_BUCKET: <your qiniu bucket name>
@@ -19,9 +20,15 @@ services:
       ADMIN_EMAIL: <admin email>
       RUNMODE: prod
 
-  db:
-    image: mysql
+  gvf-server-mysql:
+    image: mysql:8
     restart: always
     container_name: gvf-server-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./docs/db.sql:/docker-entrypoint-initdb.d/init.sql
+      - gvf-server-db-volume:/var/lib/mysql 
+
+volumes:
+  gvf-server-db-volume:
