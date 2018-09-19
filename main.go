@@ -14,7 +14,7 @@ import (
 func init() {
 	dbHost := beego.AppConfig.String("DB_MYSQL_HOST")
 	dbPwd := beego.AppConfig.String("DB_MYSQL_PASSWORD")
-	cnnStr := fmt.Sprintf("root:%s@tcp(%s:3306)/myblog?charset=utf8", dbHost, dbPwd)
+	cnnStr := fmt.Sprintf("root:%s@tcp(%s:3306)/myblog?charset=utf8", dbPwd, dbHost)
 	orm.RegisterDriver("mysql", orm.DRMySQL)
 	orm.RegisterDataBase("default", "mysql", cnnStr)
 	orm.RunSyncdb("default", false, true)
