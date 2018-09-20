@@ -26,9 +26,7 @@ services:
     container_name: gvf-server-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: myblog
     volumes:
       - ./docs/db.sql:/docker-entrypoint-initdb.d/init.sql
-      - gvf-server-db-volume:/var/lib/mysql 
-
-volumes:
-  gvf-server-db-volume:
+      - /var/lib/gvf-server/mysql:/var/lib/mysql 
