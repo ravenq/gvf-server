@@ -14,3 +14,5 @@ debug
 /tmp
 /routers/commentsRouter*.go
 *~
+*.exe
+./gvf-server

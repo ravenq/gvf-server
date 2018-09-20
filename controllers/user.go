@@ -25,6 +25,14 @@ func (c *UserController) URLMapping() {
 	c.Mapping("Login", c.Login)
 }
 
+// Prepare ...
+func (c *UserController) Prepare() {
+	c.MappingAuth("Get")
+	c.MappingAuth("GetOne")
+	c.MappingAuth("GetAll")
+	c.BaseController.Prepare()
+}
+
 // Login ...
 // @Title Login
 // @Description login

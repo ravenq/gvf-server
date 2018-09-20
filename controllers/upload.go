@@ -7,6 +7,7 @@ import (
 	"github.com/ravenq/gvf-server/utils"
 )
 
+// UploadController update for qiniu
 type UploadController struct {
 	beego.Controller
 }

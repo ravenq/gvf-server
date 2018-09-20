@@ -16,14 +16,14 @@ type BaseController struct {
 // Init init
 func (c *BaseController) Init(ctx *context.Context, controllerName, actionName string, app interface{}) {
 	c.Controller.Init(ctx, controllerName, actionName, app)
-	c.AuthInit()
-}
-
-// AuthInit set methed which need validate
-func (c *BaseController) AuthInit() {
 	c.authMethods = append(c.authMethods, "Post")
 	c.authMethods = append(c.authMethods, "Put")
 	c.authMethods = append(c.authMethods, "Delete")
+}
+
+// MappingAuth ...
+func (c *BaseController) MappingAuth(m string) {
+	c.authMethods = append(c.authMethods, m)
 }
 
 // Prepare validate

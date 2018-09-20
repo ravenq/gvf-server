@@ -8,7 +8,6 @@ import (
 
 	"github.com/ravenq/gvf-server/models"
 	"github.com/ravenq/gvf-server/utils"
-	//"github.com/astaxie/beego"
 )
 
 // MyloveController operations for Mylove
