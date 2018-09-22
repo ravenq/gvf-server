@@ -12,7 +12,6 @@ swagger/
 *.tmp
 debug
 /tmp
-/routers/commentsRouter*.go
 *~
 *.exe
 ./gvf-server
