@@ -127,6 +127,14 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
+	beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:PostController"] = append(beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:PostController"],
+		beego.ControllerComments{
+			Method: "Count",
+			Router: `/count`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
 	beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:UploadController"] = append(beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:UploadController"],
 		beego.ControllerComments{
 			Method: "Get",

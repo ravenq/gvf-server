@@ -22,6 +22,7 @@ func (c *PostController) URLMapping() {
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
+	c.Mapping("Count", c.Count)
 }
 
 // Post ...
@@ -36,6 +37,18 @@ func (c *PostController) Post() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	_, err := models.AddPost(&v)
 	c.Data["json"] = utils.NewEmptyResult(err)
+	c.ServeJSON()
+}
+
+// Count ...
+// @Title Count
+// @Description Count
+// @success 201 {int} models.Post
+// @Failure 403 body is empty
+// @router /count [get]
+func (c *PostController) Count() {
+	count, err := models.PostCount()
+	c.Data["json"] = utils.NewResult(count, err)
 	c.ServeJSON()
 }
 

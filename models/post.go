@@ -31,14 +31,14 @@ const (
 // Post model.
 type Post struct {
 	Id         int64     `orm:"auto;unique;pk" json:"id,omitempty"`
-	Author     *User     `orm:"rel(fk)" json:"author,omitempty"`
-	Category   *Category `orm:"rel(fk)" json:"category,omitempty"`
+	Author     *User     `orm:"rel(fk);null;on_delete(set_null);" json:"author,omitempty"`
+	Category   *Category `orm:"rel(fk);null;on_delete(set_null);" json:"category,omitempty"`
 	Title      string    `json:"title,omitempty"`
 	Tags       string    `json:"tags,omitempty"`
 	IsTop      bool      `json:"is_top,omitempty"`
 	Summary    string    `json:"summary,omitempty"`
 	Content    string    `orm:"type(text)" json:"content,omitempty"`
-	Visit       int      `json:"visit,omitempty"`
+	Visit      int       `json:"visit,omitempty"`
 	Status     int       `json:"status,omitempty"`
 	PostType   PostType  `json:"postType,omitempty"`
 	RefUrl     string    `orm:"null" json:"refRrl,omitempty"`
@@ -174,4 +174,11 @@ func DeletePost(id int64) (err error) {
 		}
 	}
 	return
+}
+
+// PostCount get the post count
+func PostCount() (int64, error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable(new(Post))
+	return qs.Count();
 }
