@@ -46,7 +46,7 @@ type Post struct {
 	Translator string    `orm:"null" json:"translator,omitempty"`
 	CreateTime time.Time `orm:"auto_now_add;type(datetime)" json:"createTime,omitempty"`
 	UpdateTime time.Time `orm:"auto_now;type(datetime)" json:"updateTime,omitempty"`
-	PubTime    time.Time `orm:"auto_now;type(datetime)" json:"pubTime,omitempty"`
+	PubTime    time.Time `orm:"auto_now_add;type(datetime)" json:"pubTime,omitempty"`
 }
 
 func init() {

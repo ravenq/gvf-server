@@ -16,7 +16,7 @@ type Mylove struct {
 	Author     *User     `orm:"rel(fk);null;on_delete(set_null);" json:"author,omitempty"`
 	Content    string    `json:"content,omitempty"`
 	PhotoUrl   string    `json:"photo,omitempty"`
-	CreateTime time.Time `orm:"auto_now;type(datetime)" json:"createTime,omitempty"`
+	CreateTime time.Time `orm:"auto_now_add;type(datetime)" json:"createTime,omitempty"`
 	Sign       string    `json:"sign,omitempty"`
 }
 
