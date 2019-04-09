@@ -1,8 +1,27 @@
-language: node_js
-node_js:
-- '10'
+language: go
+
+go:
+  - 1.12.x
+
+env:
+  - GO111MODULE=on
+
 script:
-- yarn build
+  - go build
+
 before_install:
-- openssl aes-256-cbc -K $encrypted_51e48ef35122_key -iv $encrypted_51e48ef35122_iv
-  -in id_rsa.enc -out ~\/.ssh/id_rsa -d
+  - openssl aes-256-cbc -K $encrypted_51e48ef35122_key -iv $encrypted_51e48ef35122_iv -in id_rsa.enc -out ~/.ssh/id_rsa -d
+  - chmod 600 ~/.ssh/id_rsa
+
+addons:
+  ssh_known_hosts:
+    - www.aqcoder.com
+
+deploy:
+  provider: script
+  script:
+    - scp -P$sshport -r gvf-server www.aqcoder.com:/var/www/gvf-server/gvf-server-update
+    - ssh root@www.aqcoder.com -o StrictHostKeyChecking=no 'cd /var/www/gvf-server/ && supervisorctl stop gvf-server && mv gvf-server-update gvf-server && supervisorctl start gvf-server'
+  skip_cleanup: true
+  on:
+    tags: true
