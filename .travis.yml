@@ -19,8 +19,8 @@ before_install:
 
 addons:
   ssh_known_hosts:
-    - www.aqcoder.com
+    - www.aqcoder.com:29371
 
 after_success:
-  - scp -P$sshport -r gvf-server www.aqcoder.com:/var/www/gvf-server/gvf-server-update
+  - scp -P29371 -r gvf-server root@www.aqcoder.com:/var/www/gvf-server/gvf-server-update
   - ssh root@www.aqcoder.com -o StrictHostKeyChecking=no 'cd /var/www/gvf-server/ && supervisorctl stop gvf-server && mv gvf-server-update gvf-server && supervisorctl start gvf-server'
