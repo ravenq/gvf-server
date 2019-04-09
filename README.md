@@ -1,5 +1,7 @@
 # gvf-server
 
+[![Build Status](https://travis-ci.org/ravenq/gvf-server.svg?branch=master)](https://travis-ci.org/ravenq/gvf-server)
+
 > The server for the GVF project.
 
 ## database

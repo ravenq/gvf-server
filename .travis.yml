@@ -1,5 +1,9 @@
 language: go
 
+branchs:
+  only:
+    - master
+
 go:
   - 1.12.x
 
@@ -17,11 +21,6 @@ addons:
   ssh_known_hosts:
     - www.aqcoder.com
 
-deploy:
-  provider: script
-  script:
-    - scp -P$sshport -r gvf-server www.aqcoder.com:/var/www/gvf-server/gvf-server-update
-    - ssh root@www.aqcoder.com -o StrictHostKeyChecking=no 'cd /var/www/gvf-server/ && supervisorctl stop gvf-server && mv gvf-server-update gvf-server && supervisorctl start gvf-server'
-  skip_cleanup: true
-  on:
-    tags: true
+after_success:
+  - scp -P$sshport -r gvf-server www.aqcoder.com:/var/www/gvf-server/gvf-server-update
+  - ssh root@www.aqcoder.com -o StrictHostKeyChecking=no 'cd /var/www/gvf-server/ && supervisorctl stop gvf-server && mv gvf-server-update gvf-server && supervisorctl start gvf-server'
