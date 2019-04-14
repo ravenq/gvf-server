@@ -22,6 +22,10 @@ const (
 	PasswordError
 	// NeedAdmin need admin user.
 	NeedAdmin
+	// LikeMoreTimes like more times.
+	LikeMoreTimes
+	// DislikeMoreTimes dislike more times.
+	DislikeMoreTimes
 )
 
 var (
@@ -32,7 +36,11 @@ var (
 	// ErrPasswordError password error
 	ErrPasswordError = errors.New("password errror")
 	// ErrNeedAdmin need admin user.
-	ErrNeedAdmin = errors.New("need admin user.")
+	ErrNeedAdmin = errors.New("need admin user")
+	// ErrLikeMoreTimes like more times.
+	ErrLikeMoreTimes = errors.New("like more times")
+	// ErrDislikeMoreTimes dislike more times.
+	ErrDislikeMoreTimes = errors.New("dislike more times")
 )
 
 var errorMap = map[error]ResultStatus{
@@ -40,6 +48,8 @@ var errorMap = map[error]ResultStatus{
 	ErrUserNotExist: UserNotExist,
 	ErrPasswordError: PasswordError,
 	ErrNeedAdmin: NeedAdmin,
+	ErrLikeMoreTimes: LikeMoreTimes,
+	ErrDislikeMoreTimes: DislikeMoreTimes,
 }
 
 // Result for request

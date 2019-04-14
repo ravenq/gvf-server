@@ -5,10 +5,14 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+	"time"
 
+	"github.com/astaxie/beego/cache"
 	"github.com/ravenq/gvf-server/models"
 	"github.com/ravenq/gvf-server/utils"
 )
+
+var bm, err = cache.NewCache("memory", `{"interval":60}`)
 
 // PostController operations for Post
 type PostController struct {
@@ -23,6 +27,8 @@ func (c *PostController) URLMapping() {
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
 	c.Mapping("Count", c.Count)
+	c.Mapping("Like", c.Like)
+	c.Mapping("Dislike", c.Dislike)
 }
 
 // Post ...
@@ -63,6 +69,15 @@ func (c *PostController) GetOne() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.ParseInt(idStr, 0, 64)
 	v, err := models.GetPostById(id)
+	// update visit for post
+	ip := utils.RemoteIP(c.Ctx.Request)
+	ipStr := "remote-ips-post-" + idStr + "-" + ip
+	if !bm.IsExist(ipStr) {
+		v.Visit++
+		models.UpdatePostById(v)
+		bm.Put(ipStr, 1, 24*time.Hour)
+	}
+	v.Message, _ = models.GetPostMessageCount(v.Id)
 	c.Data["json"] = utils.NewResult(v, err)
 	c.ServeJSON()
 }
@@ -142,6 +157,57 @@ func (c *PostController) Put() {
 	err := models.UpdatePostById(&v)
 	c.Data["json"] = utils.NewEmptyResult(err)
 	c.ServeJSON()
+}
+
+// Like ...
+// @Title Like
+// @Description update the Post like
+// @Param	id		path 	string	true		"The id you want to update"
+// @Success 200 {object} models.Post
+// @Failure 403 :id is not int
+// @router /like/:id [get]
+func (c *PostController) Like() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+	v, err := models.GetPostById(id)
+	ip := utils.RemoteIP(c.Ctx.Request)
+	ipStr := "like-remote-ips-post-" + idStr + "-" + ip
+	if !bm.IsExist(ipStr) {
+		v.Likes++
+		models.UpdatePostById(v)
+		bm.Put(ipStr, 1, 24*time.Hour)
+
+		c.Data["json"] = utils.NewResult(v, err)
+		c.ServeJSON()
+	} else {
+		c.Data["json"] = utils.FailResult(utils.ErrLikeMoreTimes)
+		c.ServeJSON()
+	}
+}
+
+// Dislike ...
+// @Title Dislike
+// @Description update the Post dislike
+// @Param	id		path 	string	true		"The post id which you want to update"
+// @Success 200 {object} models.Post
+// @Failure 403 :id is not int
+// @router /dislike/:id [get]
+func (c *PostController) Dislike() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+	v, err := models.GetPostById(id)
+	ip := utils.RemoteIP(c.Ctx.Request)
+	ipStr := "like-remote-ips-post" + idStr + "-" + ip
+	if !bm.IsExist(ipStr) {
+		v.Dislikes++
+		models.UpdatePostById(v)
+		bm.Put(ipStr, 1, 24*time.Hour)
+		c.Data["json"] = utils.NewResult(v, err)
+		c.ServeJSON()
+	} else {
+		c.Data["json"] = utils.FailResult(utils.ErrDislikeMoreTimes)
+		c.ServeJSON()
+	}
 }
 
 // Delete ...

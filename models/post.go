@@ -38,15 +38,18 @@ type Post struct {
 	IsTop      bool      `json:"is_top,omitempty"`
 	Summary    string    `json:"summary,omitempty"`
 	Content    string    `orm:"type(text)" json:"content,omitempty"`
-	Visit      int       `json:"visit,omitempty"`
 	Status     int       `json:"status,omitempty"`
 	PostType   PostType  `json:"postType,omitempty"`
 	RefUrl     string    `orm:"null" json:"refRrl,omitempty"`
 	RefAuthor  string    `orm:"null" json:"refAuthor,omitempty"`
 	Translator string    `orm:"null" json:"translator,omitempty"`
 	CreateTime time.Time `orm:"auto_now_add;type(datetime)" json:"createTime,omitempty"`
-	UpdateTime time.Time `orm:"auto_now;type(datetime)" json:"updateTime,omitempty"`
+	UpdateTime time.Time `orm:"auto_now_add;type(datetime)" json:"updateTime,omitempty"`
 	PubTime    time.Time `orm:"auto_now_add;type(datetime)" json:"pubTime,omitempty"`
+	Visit      int64     `json:"visit"`
+	Likes      int64     `json:"likes"`
+	Dislikes   int64     `json:"dislikes"`
+	Message    int64     `orm:"-"; json:"message, omitempty"`
 }
 
 func init() {
@@ -154,6 +157,7 @@ func UpdatePostById(m *Post) (err error) {
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
+		v.UpdateTime = time.Now()
 		if num, err = o.Update(m); err == nil {
 			fmt.Println("Number of records updated in database:", num)
 		}

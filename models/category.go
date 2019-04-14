@@ -16,7 +16,7 @@ type Category struct {
 	Name       string    `json:"name,omitempty"`
 	Desc       string    `orm:"null" json:"desc,omitempty"`
 	CreateTime time.Time `orm:"auto_now_add;type(datetime)" json:"createTime,omitempty"`
-	UpdateTime time.Time `orm:"auto_now;type(datetime)" json:"updateTime,omitempty"`
+	UpdateTime time.Time `orm:"auto_now_add;type(datetime)" json:"updateTime,omitempty"`
 
 	Posts []*Post `orm:"reverse(many)" json:"posts,omitempty"`
 }

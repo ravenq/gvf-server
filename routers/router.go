@@ -48,6 +48,11 @@ func init() {
 				&controllers.UploadController{},
 			),
 		),
+		beego.NSNamespace("/comments",
+			beego.NSInclude(
+				&controllers.CommentsController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

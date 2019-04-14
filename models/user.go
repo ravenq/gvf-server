@@ -17,6 +17,7 @@ type User struct {
 	Nick        string    `json:"nick,omitempty"`
 	Password    string    `json:"password,omitempty"`
 	CreateTime  time.Time `orm:"auto_now_add;type(datetime)" json:"createTime,omitempty"`
+	UpdateTime time.Time  `orm:"auto_now_add;type(datetime)" json:"UpdateTime,omitempty"`
 	Gender      string    `orm:"null" json:"gender,omitempty"`
 	Age         int       `orm:"null" json:"age,omitempty"`
 	Address     string    `orm:"null" json:"address,omitempty"`
@@ -153,6 +154,7 @@ func UpdateUserById(m *User) (err error) {
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
+		v.UpdateTime = time.Now()
 		if num, err = o.Update(m); err == nil {
 			fmt.Println("Number of records updated in database:", num)
 		}
