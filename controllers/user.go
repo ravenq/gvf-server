@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/astaxie/beego"
+
 	"github.com/astaxie/beego/httplib"
 
 	"github.com/ravenq/gvf-server/models"
@@ -128,8 +130,8 @@ func (c *UserController) LoginWithGithub() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	code := v["code"]
 	state := v["state"]
-	clientID := "2e7a965d49ae06492a31"
-	clientSecret := "56949b54e768dbb7036457612ed751e0b2fe5652"
+	clientID := beego.AppConfig.String("GITHUB_CLIENT_ID")
+	clientSecret := beego.AppConfig.String("GITHUB_CLIENT_SECRET")
 
 	req := httplib.Post("https://github.com/login/oauth/access_token")
 	req.Param("client_id", clientID)
