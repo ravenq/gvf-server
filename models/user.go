@@ -10,6 +10,14 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
+// PostStatus the post status
+type UserType int
+
+const (
+	UserType_INNER = iota
+	UserType_GITHUB
+)
+
 // User model.
 type User struct {
 	Id          int64     `orm:"auto;unique;pk" json:"id,omitempty"`
@@ -17,12 +25,15 @@ type User struct {
 	Nick        string    `json:"nick,omitempty"`
 	Password    string    `json:"password,omitempty"`
 	CreateTime  time.Time `orm:"auto_now_add;type(datetime)" json:"createTime,omitempty"`
-	UpdateTime time.Time  `orm:"auto_now_add;type(datetime)" json:"UpdateTime,omitempty"`
+	UpdateTime  time.Time `orm:"auto_now_add;type(datetime)" json:"UpdateTime,omitempty"`
 	Gender      string    `orm:"null" json:"gender,omitempty"`
 	Age         int       `orm:"null" json:"age,omitempty"`
 	Address     string    `orm:"null" json:"address,omitempty"`
-	Email       string    `json:"email,omitempty"`
+	Email       string    `orm:"null" json:"email,omitempty"`
 	IsAdmin     bool      `json:"isAdmin,omitempty"`
+	AvatarUrl   string    `orm:"null" json:"avatarUrl,omitempty"`
+	UserType    int       `json:"userType"`
+	ForeignId   string    `orm:"null" json:"ForeignId"`
 	Token       string    `orm:"-" json:"token,omitempty"`
 	UploadToken string    `orm:"-" json:"uploadToken,omitempty"`
 }
@@ -61,12 +72,22 @@ func GetUserByName(name string) (v *User, err error) {
 	return nil, err
 }
 
-// GetUserByName retrieves User by email. Returns error if
+// GetUserByEmail retrieves User by email. Returns error if
 // name doesn't exist
 func GetUserByEmail(name string) (v *User, err error) {
 	o := orm.NewOrm()
 	v = &User{Name: name}
 	if err = o.QueryTable(new(User)).Filter("Email", name).RelatedSel().One(v); err == nil {
+		return v, nil
+	}
+	return nil, err
+}
+
+// GetUserByForeignId get user by foreign id
+func GetUserByForeignId(id string) (v *User, err error) {
+	o := orm.NewOrm()
+	v = &User{ForeignId: id}
+	if err = o.QueryTable(new(User)).Filter("ForeignId", id).RelatedSel().One(v); err == nil {
 		return v, nil
 	}
 	return nil, err

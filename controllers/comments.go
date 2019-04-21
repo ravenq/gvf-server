@@ -22,6 +22,22 @@ func (c *CommentsController) URLMapping() {
 	c.Mapping("Fetch", c.Fetch)
 }
 
+
+// Prepare ...
+func (c *CommentsController) Prepare() {
+	_, actionName := c.GetControllerAndAction()
+	token := c.GetSession(utils.TOKEN)
+	if "Post" == actionName {
+		if token == nil {
+			c.Data["json"] = utils.FailResult(utils.ErrNeedLogin)
+			c.ServeJSON()
+		}
+		return
+	}
+
+	c.BaseController.Prepare()
+}
+
 // Post ...
 // @Title Post
 // @Description create Comments
@@ -54,22 +70,16 @@ func (c *CommentsController) GetOne() {
 }
 
 // Fetch ...
-// @Title Get One
-// @Description get Comments by post id
+// @Title Fetch
+// @Description get Comments by comment id
 // @Param	id		path 	string	true		"The key for staticblock"
 // @Success 200 {object} models.Comments
 // @Failure 403 : id is empty
 // @router /fetch/:id [get]
 func (c *CommentsController) Fetch() {
 	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.ParseInt(idStr, 0, 64)
-	_, err := models.GetPostById(id)
-	if err != nil {
-		c.Data["json"] = err
-		c.ServeJSON()
-		return
-	}
-	l, err := models.GetCommentsByPostId(id)
+	
+	l, err := models.GetCommentsByCommentId(idStr)
 
 	// sort
 	m := make(map[int64]*models.Comments)

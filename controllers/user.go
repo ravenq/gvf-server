@@ -3,8 +3,12 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
+	"time"
+
+	"github.com/astaxie/beego/httplib"
 
 	"github.com/ravenq/gvf-server/models"
 	"github.com/ravenq/gvf-server/utils"
@@ -23,6 +27,7 @@ func (c *UserController) URLMapping() {
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
 	c.Mapping("Login", c.Login)
+	c.Mapping("LoginWithGithub", c.LoginWithGithub)
 }
 
 // Prepare ...
@@ -55,12 +60,121 @@ func (c *UserController) Login() {
 		if p.Password != v.Password {
 			c.Data["json"] = utils.FailResult(utils.ErrPasswordError)
 		} else {
-			//v.Token = utils.UUID()
 			c.SetSession(utils.TOKEN, v)
 			v.Token = c.CruSession.SessionID()
 			c.Data["json"] = utils.NewResult(v, nil)
 		}
 	}
+	c.ServeJSON()
+}
+
+// GithubAccessResult github access result.
+type GithubAccessResult struct {
+	AccessToken string `json:"access_token,omitempty"`
+	TokenType   string `json:"token_type,omitempty"`
+	Scope       string `json:"scope,omitempty"`
+}
+
+// GithubUser github user.
+type GithubUser struct {
+	Login                   string    `json:"login,omitempty"`
+	ID                      int       `json:"id,omitempty"`
+	NodeID                  string    `json:"node_id,omitempty"`
+	AvatarURL               string    `json:"avatar_url,omitempty"`
+	GravatarID              string    `json:"gravatar_id,omitempty"`
+	URL                     string    `json:"url,omitempty"`
+	HtmlURL                 string    `json:"html_url,omitempty"`
+	FollowersURL            string    `json:"followers_url,omitempty"`
+	FollowingURL            string    `json:"following_url,omitempty"`
+	GistsURL                string    `json:"gists_url,omitempty"`
+	StarredURL              string    `json:"starred_url,omitempty"`
+	SubscriptionsURL        string    `json:"subscriptions_url,omitempty"`
+	OrganizationsURL        string    `json:"organizations_url,omitempty"`
+	ReposURL                string    `json:"repos_url,omitempty"`
+	EventsURL               string    `json:"events_url,omitempty"`
+	ReceivedEventsURL       string    `json:"received_events_url,omitempty"`
+	Type                    string    `json:"type,omitempty"`
+	SiteAdmin               bool      `json:"site_admin,omitempty"`
+	Name                    string    `json:"name,omitempty"`
+	Company                 string    `json:"company,omitempty"`
+	Blog                    string    `json:"blog,omitempty"`
+	Location                string    `json:"location,omitempty"`
+	Email                   string    `json:"email,omitempty"`
+	Hireable                string    `json:"hireable,omitempty"`
+	Bio                     string    `json:"bio,omitempty"`
+	PublicRepos             string    `json:"public_repos,omitempty"`
+	PublicGists             int       `json:"public_gists,omitempty"`
+	Followers               int       `json:"followers,omitempty"`
+	Following               int       `json:"following,omitempty"`
+	CreatedAt               time.Time `json:"created_at,omitempty"`
+	UpdatedAt               time.Time `json:"updated_at,omitempty"`
+	PrivateGists            int       `json:"private_gists,omitempty"`
+	TotalPrivateRepos       int       `json:"total_private_repos,omitempty"`
+	OwnedPrivateRepos       int       `json:"owned_private_repos,omitempty"`
+	DiskUsage               int       `json:"disk_usage,omitempty"`
+	Collaborators           int       `json:"collabocollaboratorsrators,omitempty"`
+	TwoFactorAuthentication bool      `json:"two_factor_authentication,omitempty"`
+}
+
+// LoginWithGithub ...
+// @Title LoginWithGithub
+// @Description Login with github
+// @param body {username: "", password: ""}
+// @success 201 {int} models.User
+// @Failure 403 body is empty
+// @router /loginWithGithub [post]
+func (c *UserController) LoginWithGithub() {
+	var v map[string]string
+	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	code := v["code"]
+	state := v["state"]
+	clientID := "2e7a965d49ae06492a31"
+	clientSecret := "56949b54e768dbb7036457612ed751e0b2fe5652"
+
+	req := httplib.Post("https://github.com/login/oauth/access_token")
+	req.Param("client_id", clientID)
+	req.Param("client_secret", clientSecret)
+	req.Param("code", code)
+	req.Param("state", state)
+	req.Header("Content-Type", "application/json")
+	req.Header("Accept", "application/json")
+
+	var accRet GithubAccessResult
+	err := req.ToJSON(&accRet)
+	if err != nil {
+		c.Data["json"] = errors.New(fmt.Sprintf("Error: %v", err))
+		c.ServeJSON()
+		return
+	}
+
+	reqUser := httplib.Get(fmt.Sprintf("https://api.github.com/user?access_token=%s", accRet.AccessToken))
+
+	var githubUser GithubUser
+	errGetUser := reqUser.ToJSON(&githubUser)
+	if err != nil {
+		c.Data["json"] = errors.New(fmt.Sprintf("Error: %v", errGetUser))
+		c.ServeJSON()
+		return
+	}
+
+	foreignId := fmt.Sprintf("github-%d", githubUser.ID)
+	user, errGetUser := models.GetUserByForeignId(foreignId)
+	if errGetUser != nil || user == nil {
+		user = &models.User{}
+		user.Name = githubUser.Name
+		user.Nick = githubUser.Name
+		user.AvatarUrl = githubUser.AvatarURL
+		user.Email = githubUser.Email
+		user.UserType = models.UserType_GITHUB
+		user.ForeignId = foreignId
+		user.IsAdmin = false
+		models.AddUser(user)
+	}
+
+	c.SetSession(utils.TOKEN, user)
+	user.Token = c.CruSession.SessionID()
+	c.Data["json"] = utils.NewResult(user, nil)
+
 	c.ServeJSON()
 }
 

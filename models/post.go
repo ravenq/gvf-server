@@ -70,6 +70,7 @@ func GetPostById(id int64) (v *Post, err error) {
 	o := orm.NewOrm()
 	v = &Post{Id: id}
 	if err = o.QueryTable(new(Post)).Filter("Id", id).RelatedSel().One(v); err == nil {
+		v.Author.Password = ""
 		return v, nil
 	}
 	return nil, err
@@ -131,6 +132,7 @@ func GetAllPost(query map[string]string, fields []string, sortby []string, order
 	if _, err = qs.Limit(limit, offset).All(&l, fields...); err == nil {
 		if len(fields) == 0 {
 			for _, v := range l {
+				v.Author.Password = ""
 				ml = append(ml, v)
 			}
 		} else {

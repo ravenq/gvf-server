@@ -23,8 +23,8 @@ const (
 type Comments struct {
 	Id         int64          `orm:"auto;unique;pk" json:"id,omitempty"`
 	Parent     int64          `json:"parent,omitempty"`
-	PostId     int64          `json:"postId"`
-	UserId     int64          `josn:"userId"`
+	CommentId  string         `json:"commentId"`
+	Author     *User     			`orm:"rel(fk);null;on_delete(set_null);" json:"author,omitempty"`
 	CreateTime time.Time      `orm:"auto_now_add;type(datetime)" json:"createTime,omitempty"`
 	UpdateTime time.Time      `orm:"auto_now_add;type(datetime)" json:"updateTime,omitempty"`
 	Status     CommentsStatus `json:"status,omitempty"`
@@ -88,16 +88,16 @@ func DeleteComments(id int64) (err error) {
 	return
 }
 
-// GetCommentsByPostId get Comments by post id
-func GetCommentsByPostId(id int64) (ml []Comments, err error) {
+// GetCommentsByCommentId get Comments by post id
+func GetCommentsByCommentId(id string) (ml []Comments, err error) {
 	o := orm.NewOrm()
-	_, err = o.QueryTable(new(Comments)).Filter("post_id", id).OrderBy("create_time").RelatedSel().All(&ml)
+	_, err = o.QueryTable(new(Comments)).Filter("comment_id", id).OrderBy("create_time").RelatedSel().All(&ml)
 	return
 }
 
-// GetPostMessageCount get post message count.
-func GetPostMessageCount(id int64) (count int64, err error) {
+// GetCommentsCount get post message count.
+func GetCommentsCount(id string) (count int64, err error) {
 	o := orm.NewOrm()
-	count, err = o.QueryTable(new(Comments)).Filter("post_id", id).OrderBy("create_time").RelatedSel().Count()
+	count, err = o.QueryTable(new(Comments)).Filter("comment_id", id).RelatedSel().Count()
 	return
 }

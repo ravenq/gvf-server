@@ -225,6 +225,15 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:UserController"] = append(beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:UserController"],
         beego.ControllerComments{
+            Method: "Delete",
+            Router: `/:id`,
+            AllowHTTPMethods: []string{"delete"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:UserController"] = append(beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:UserController"],
+        beego.ControllerComments{
             Method: "GetOne",
             Router: `/:id`,
             AllowHTTPMethods: []string{"get"},
@@ -243,17 +252,17 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:UserController"] = append(beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:UserController"],
         beego.ControllerComments{
-            Method: "Delete",
-            Router: `/:id`,
-            AllowHTTPMethods: []string{"delete"},
+            Method: "Login",
+            Router: `/login`,
+            AllowHTTPMethods: []string{"post"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
 
     beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:UserController"] = append(beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:UserController"],
         beego.ControllerComments{
-            Method: "Login",
-            Router: `/login`,
+            Method: "LoginWithGithub",
+            Router: `/loginWithGithub`,
             AllowHTTPMethods: []string{"post"},
             MethodParams: param.Make(),
             Filters: nil,

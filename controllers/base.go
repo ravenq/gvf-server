@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"github.com/ravenq/gvf-server/models"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
+	"github.com/ravenq/gvf-server/models"
 	"github.com/ravenq/gvf-server/utils"
 )
 
@@ -26,13 +26,24 @@ func (c *BaseController) MappingAuth(m string) {
 	c.authMethods = append(c.authMethods, m)
 }
 
+// UnMappingAuth ...
+func (c *BaseController) UnMappingAuth(m string) {
+	ret := make([]string, 0, len(c.authMethods))
+	for _, val := range c.authMethods {
+		if val != m {
+			ret = append(ret, val)
+		}
+	}
+	c.authMethods = ret
+}
+
 // Prepare validate
 func (c *BaseController) Prepare() {
 	_, actionName := c.GetControllerAndAction()
 	token := c.GetSession(utils.TOKEN)
 	for _, i := range c.authMethods {
 		if i == actionName {
-			if token == nil {	
+			if token == nil {
 				c.Data["json"] = utils.FailResult(utils.ErrNeedLogin)
 				c.ServeJSON()
 			}
@@ -41,7 +52,7 @@ func (c *BaseController) Prepare() {
 				c.Data["json"] = utils.FailResult(utils.ErrNeedAdmin)
 				c.ServeJSON()
 			}
-			break	
+			break
 		}
 	}
 }

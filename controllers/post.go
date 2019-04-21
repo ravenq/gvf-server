@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"encoding/json"
 	"errors"
 	"strconv"
@@ -77,7 +78,8 @@ func (c *PostController) GetOne() {
 		models.UpdatePostById(v)
 		bm.Put(ipStr, 1, 24*time.Hour)
 	}
-	v.Message, _ = models.GetPostMessageCount(v.Id)
+	commentID := fmt.Sprintf("post-%d", v.Id)
+	v.Message, _ = models.GetCommentsCount(commentID)
 	c.Data["json"] = utils.NewResult(v, err)
 	c.ServeJSON()
 }
