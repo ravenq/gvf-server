@@ -49,7 +49,7 @@ type Post struct {
 	Visit      int64     `json:"visit"`
 	Likes      int64     `json:"likes"`
 	Dislikes   int64     `json:"dislikes"`
-	Message    int64     `orm:"-"; json:"message, omitempty"`
+	CommentsCount int64  `orm:"-" json:"commentsCount,omitempty"`
 }
 
 func init() {
@@ -133,6 +133,8 @@ func GetAllPost(query map[string]string, fields []string, sortby []string, order
 		if len(fields) == 0 {
 			for _, v := range l {
 				v.Author.Password = ""
+				commentID := fmt.Sprintf("post-%d", v.Id)
+				v.CommentsCount, _ = GetCommentsCount(commentID)
 				ml = append(ml, v)
 			}
 		} else {

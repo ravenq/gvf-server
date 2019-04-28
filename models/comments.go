@@ -24,7 +24,7 @@ type Comments struct {
 	Id         int64          `orm:"auto;unique;pk" json:"id,omitempty"`
 	Parent     int64          `json:"parent,omitempty"`
 	CommentId  string         `json:"commentId"`
-	Author     *User     			`orm:"rel(fk);null;on_delete(set_null);" json:"author,omitempty"`
+	Author     *User          `orm:"rel(fk);null;on_delete(set_null);" json:"author,omitempty"`
 	CreateTime time.Time      `orm:"auto_now_add;type(datetime)" json:"createTime,omitempty"`
 	UpdateTime time.Time      `orm:"auto_now_add;type(datetime)" json:"updateTime,omitempty"`
 	Status     CommentsStatus `json:"status,omitempty"`

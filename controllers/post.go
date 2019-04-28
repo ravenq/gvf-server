@@ -79,7 +79,7 @@ func (c *PostController) GetOne() {
 		bm.Put(ipStr, 1, 24*time.Hour)
 	}
 	commentID := fmt.Sprintf("post-%d", v.Id)
-	v.Message, _ = models.GetCommentsCount(commentID)
+	v.CommentsCount, _ = models.GetCommentsCount(commentID)
 	c.Data["json"] = utils.NewResult(v, err)
 	c.ServeJSON()
 }
