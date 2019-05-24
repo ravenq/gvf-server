@@ -22,6 +22,7 @@ const (
 // Comments model.
 type Comments struct {
 	Id         int64          `orm:"auto;unique;pk" json:"id,omitempty"`
+	IsTop      bool           `json:"isTop,omitempty"`
 	Parent     int64          `json:"parent,omitempty"`
 	CommentId  string         `json:"commentId"`
 	Author     *User          `orm:"rel(fk);null;on_delete(set_null);" json:"author,omitempty"`
@@ -30,7 +31,9 @@ type Comments struct {
 	Status     CommentsStatus `json:"status,omitempty"`
 	RemoteAddr string         `json:"remoteAddr,omitempty"`
 	Content    string         `orm:"type(text)" json:"content,omitempty"`
-	Replies    []Comments     `orm:"-" json:"replies,omitempty"`
+	Likes      int64     	    `json:"likes"`
+	Dislikes   int64          `json:"dislikes"`
+	Replies    []*Comments    `orm:"-" json:"replies,omitempty"`
 }
 
 func init() {
@@ -50,7 +53,7 @@ func AddComments(m *Comments) (id int64, err error) {
 func GetCommentsById(id int64) (v *Comments, err error) {
 	o := orm.NewOrm()
 	v = &Comments{Id: id}
-	if err = o.QueryTable(new(Comments)).Filter("ID", id).RelatedSel().One(v); err == nil {
+	if err = o.QueryTable(new(Comments)).Filter("Id", id).RelatedSel().One(v); err == nil {
 		return v, nil
 	}
 	return nil, err

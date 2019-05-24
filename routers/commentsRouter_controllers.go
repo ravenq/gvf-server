@@ -72,8 +72,26 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:CommentsController"] = append(beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:CommentsController"],
         beego.ControllerComments{
+            Method: "Dislike",
+            Router: `/dislike/:id`,
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:CommentsController"] = append(beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:CommentsController"],
+        beego.ControllerComments{
             Method: "Fetch",
             Router: `/fetch/:id`,
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:CommentsController"] = append(beego.GlobalControllerRouter["github.com/ravenq/gvf-server/controllers:CommentsController"],
+        beego.ControllerComments{
+            Method: "Like",
+            Router: `/like/:id`,
             AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,

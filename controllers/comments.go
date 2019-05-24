@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"time"
 	"encoding/json"
 	"strconv"
 
@@ -20,6 +21,8 @@ func (c *CommentsController) URLMapping() {
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
 	c.Mapping("Fetch", c.Fetch)
+	c.Mapping("Like", c.Like)
+	c.Mapping("Dislike", c.Dislike)
 }
 
 
@@ -52,6 +55,56 @@ func (c *CommentsController) Post() {
 	_, err := models.AddComments(&v)
 	c.Data["json"] = utils.NewEmptyResult(err)
 	c.ServeJSON()
+}
+
+// Like ...
+// @Title Like
+// @Description add like for Comments
+// @Success 201 {int} models.Comments
+// @Failure 403 body is empty
+// @router /like/:id [get]
+func (c *CommentsController) Like() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+	v, err := models.GetCommentsById(id)
+	ip := utils.RemoteIP(c.Ctx.Request)
+	ipStr := "like-remote-ips-comments-" + idStr + "-" + ip
+	if !bm.IsExist(ipStr) {
+		v.Likes++
+		models.UpdateCommentsById(v)
+		bm.Put(ipStr, 1, 24*time.Hour)
+
+		c.Data["json"] = utils.NewResult(v, err)
+		c.ServeJSON()
+	} else {
+		c.Data["json"] = utils.FailResult(utils.ErrLikeMoreTimes)
+		c.ServeJSON()
+	}
+}
+
+// Dislike ...
+// @Title Dislike
+// @Description add dislike for Comments
+// @Success 201 {int} models.Comments
+// @Failure 403 body is empty
+// @router /dislike/:id [get]
+func (c *CommentsController) Dislike() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+	v, err := models.GetCommentsById(id)
+	ip := utils.RemoteIP(c.Ctx.Request)
+	ipStr := "dislike-remote-ips-comments-" + idStr + "-" + ip
+	if !bm.IsExist(ipStr) {
+		v.Dislikes++
+		models.UpdateCommentsById(v)
+		bm.Put(ipStr, 1, 24*time.Hour)
+
+		c.Data["json"] = utils.NewResult(v, err)
+		c.ServeJSON()
+	} else {
+		c.Data["json"] = utils.FailResult(utils.ErrLikeMoreTimes)
+		c.ServeJSON()
+	}
 }
 
 // GetOne ...
@@ -88,12 +141,12 @@ func (c *CommentsController) Fetch() {
 	}
 
 	var ml []*models.Comments
-	for _, v := range l {
+	for i, v := range l {
 		if v.Parent < 1 {
 			ml = append(ml, m[v.Id])
 		} else {
 			if p, ok := m[v.Parent]; ok {
-				p.Replies = append(p.Replies, v)
+				p.Replies = append(p.Replies, &l[i])
 			}
 		}
 	}
