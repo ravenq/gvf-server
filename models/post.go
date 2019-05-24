@@ -39,7 +39,7 @@ type Post struct {
 	Summary    string    `json:"summary,omitempty"`
 	Content    string    `orm:"type(text)" json:"content,omitempty"`
 	Status     int       `json:"status,omitempty"`
-	PostType   PostType  `json:"postType,omitempty"`
+	PostType   PostType  `json:"postType"`
 	RefUrl     string    `orm:"null" json:"refRrl,omitempty"`
 	RefAuthor  string    `orm:"null" json:"refAuthor,omitempty"`
 	Translator string    `orm:"null" json:"translator,omitempty"`
